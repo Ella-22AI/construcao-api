@@ -96,3 +96,8 @@ Exemplo de corpo para cadastro ou edição:
 - Os produtos são armazenados em memória. Eles voltam aos valores iniciais quando o servidor é reiniciado.
 - A imagem automática e algumas imagens do catálogo dependem de serviços externos e de conexão com a internet.
 - A música é instrumental e sintetizada no navegador; o navegador só a inicia após uma interação do usuário.
+- ![](https://github.com/Ella-22AI/construcao-api/blob/main/tela1.png)
+- ![](https://github.com/Ella-22AI/construcao-api/blob/main/tela2.jpeg)
+- ![](https://github.com/Ella-22AI/construcao-api/blob/main/tela3.jpeg)
+- ![](https://github.com/Ella-22AI/construcao-api/blob/main/tela4.jpeg)
+- ![](https://github.com/Ella-22AI/construcao-api/blob/main/tela5.jpeg)
