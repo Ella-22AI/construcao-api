@@ -1,0 +1,1019 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#132820">
+  <title>Feira API | Catálogo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #14251f;
+      --muted: #718078;
+      --paper: #f0f4ed;
+      --surface: #fbfcf8;
+      --line: #dce5dc;
+      --lime: #d9ff64;
+      --blue: #4968f2;
+      --coral: #ff795f;
+      --mono: "DM Mono", monospace;
+      --sans: "Space Grotesk", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body { isolation: isolate; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background-color: var(--paper);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='160' viewBox='0 0 180 160'%3E%3Cg opacity='.25'%3E%3Cpath d='M31 18c-7-8-19-2-19 9 0 13 10 24 19 29 9-5 19-16 19-29 0-11-12-17-19-9Z' fill='%23ff795f'/%3E%3Cpath d='M30 15c2-8 9-11 15-9-1 8-7 12-15 12' fill='%235a9957'/%3E%3Ccircle cx='122' cy='35' r='17' fill='%23f2c84b'/%3E%3Cpath d='M122 18v34m-17-17h34m-29-12 24 24m0-24-24 24' stroke='%23e9a93e' stroke-width='2'/%3E%3Ccircle cx='60' cy='111' r='12' fill='%235e91e8'/%3E%3Ccircle cx='78' cy='108' r='12' fill='%235e91e8'/%3E%3Ccircle cx='69' cy='125' r='12' fill='%235e91e8'/%3E%3Cpath d='M70 96c2-9 10-12 16-11-2 8-8 12-16 12' fill='%235a9957'/%3E%3Cpath d='M143 99c-8-8-20-2-20 9 0 12 10 22 20 27 9-5 18-15 18-27 0-11-11-17-18-9Z' fill='%23f081a2'/%3E%3Cpath d='M142 96c2-8 8-10 14-8-1 7-7 11-14 11' fill='%235a9957'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 180px 160px;
+      font-family: var(--sans);
+    }
+
+    .glitter-canvas { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    #background-glitter { z-index: 0; }
+    #click-glitter { z-index: 10; }
+
+    button, input { font: inherit; }
+    button { color: inherit; }
+
+    .topbar {
+      position: relative;
+      z-index: 1;
+      min-height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 max(24px, calc((100vw - 1240px) / 2));
+      color: #f8fff2;
+      background: var(--ink);
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: inherit; }
+    .brand-mark { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 10px; color: var(--ink); background: var(--lime); font-size: 19px; font-weight: 700; }
+    .brand-name { font-size: 15px; font-weight: 700; letter-spacing: 0; }
+    .brand-name span { color: #a8b7ad; font-weight: 500; }
+    .top-actions { display: flex; align-items: center; gap: 24px; }
+
+    .status, .docs-link, .eyebrow, .endpoint, .count-label, .card-index, .modal-label {
+      font: 11px var(--mono);
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .status { display: inline-flex; align-items: center; gap: 9px; color: #d4e1d7; }
+    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 12px #d9ff6480; }
+    .status.is-offline .status-dot { background: var(--coral); box-shadow: none; }
+    .docs-link { color: #e9f2eb; text-decoration: none; border-bottom: 1px solid #708078; padding-bottom: 3px; }
+
+    main { position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 42px 24px 72px; }
+    .intro { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 34px; align-items: stretch; }
+    .intro-copy { padding: 18px 0 24px; }
+    .eyebrow { display: flex; align-items: center; gap: 9px; color: #537064; }
+    .eyebrow::before { content: ""; width: 22px; height: 1px; background: var(--blue); }
+    h1 { max-width: 690px; margin: 17px 0 12px; font-size: 54px; line-height: 0.99; letter-spacing: 0; font-weight: 600; }
+    h1 span { color: #547063; }
+    .intro-copy p { margin: 0; color: #64766b; font-size: 15px; }
+
+    .feature-image { position: relative; min-height: 190px; overflow: hidden; border-radius: 5px; background: #bedc75; }
+    .feature-image img { width: 100%; height: 100%; position: absolute; inset: 0; object-fit: cover; }
+    .feature-image::after { content: ""; position: absolute; inset: 35% 0 0; background: linear-gradient(transparent, #132820a8); }
+    .feature-caption { position: absolute; z-index: 1; left: 16px; right: 16px; bottom: 14px; display: flex; justify-content: space-between; align-items: end; color: white; }
+    .feature-caption strong { font-size: 18px; font-weight: 600; }
+    .feature-caption span { padding: 6px 9px; color: var(--ink); background: var(--lime); font: 10px var(--mono); text-transform: uppercase; }
+
+    .toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 31px 0 17px; padding: 13px 0; border-top: 1px solid #cbd8ce; border-bottom: 1px solid #cbd8ce; }
+    .toolbar-left, .toolbar-right { display: flex; align-items: center; gap: 12px; }
+    .count { display: flex; align-items: baseline; gap: 9px; min-width: 115px; }
+    .count strong { font-size: 25px; font-weight: 600; }
+    .count-label { color: var(--muted); }
+    .endpoint { color: #3d5e4f; padding: 8px 10px; border: 1px solid #cfdbd0; background: #f8fbf5; }
+
+    .search-wrap { position: relative; }
+    .search-wrap::before { content: "🍒"; position: absolute; left: 12px; top: 11px; font-size: 15px; }
+    .search { width: min(260px, 34vw); height: 38px; padding: 0 12px 0 39px; border: 1px solid #cfdbd0; border-radius: 3px; outline: none; color: var(--ink); background: var(--surface); font-size: 13px; }
+    .search:focus { border-color: var(--blue); box-shadow: 0 0 0 2px #4968f220; }
+    .icon-button { position: relative; width: 38px; height: 38px; display: grid; place-items: center; border: 1px solid #cfdbd0; border-radius: 3px; background: var(--surface); cursor: pointer; transition: background 160ms ease, transform 160ms ease; }
+    .icon-button::after { content: "🍋"; position: absolute; top: -8px; right: -7px; font-size: 11px; }
+    .icon-button:hover { background: var(--lime); transform: translateY(-1px); }
+    .refresh-symbol { font-size: 20px; line-height: 1; }
+    .add-button { height: 38px; display: inline-flex; align-items: center; gap: 8px; padding: 0 12px; border: 1px solid var(--ink); border-radius: 3px; color: #f8fff2; background: var(--ink); font-size: 12px; font-weight: 600; cursor: pointer; transition: background 160ms ease, color 160ms ease; }
+    .add-button::before { content: "🍓"; font-size: 14px; }
+    .add-button:hover { color: var(--ink); background: var(--lime); }
+    .add-symbol { font-size: 19px; line-height: 1; }
+
+    .product-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+    .product-card { min-width: 0; overflow: hidden; border: 1px solid #ffffffa8; border-radius: 8px; background: #fbfcf8b8; box-shadow: 0 12px 32px #243b2b0d, inset 0 1px #ffffffd9; backdrop-filter: blur(18px) saturate(145%); -webkit-backdrop-filter: blur(18px) saturate(145%); animation: appear 400ms both; }
+    .product-card:nth-child(2) { animation-delay: 55ms; }
+    .product-card:nth-child(3) { animation-delay: 110ms; }
+    .product-card:nth-child(4) { animation-delay: 165ms; }
+    .product-card:nth-child(5) { animation-delay: 220ms; }
+    .image-wrap { position: relative; height: 205px; overflow: hidden; background: #d9e7cc; }
+    .product-image { width: 100%; height: 100%; display: block; object-fit: cover; transition: transform 350ms ease; }
+    .product-card:hover .product-image { transform: scale(1.035); }
+    .card-index { position: absolute; top: 12px; left: 12px; padding: 7px 9px; color: var(--ink); background: var(--lime); }
+    .card-actions { display: flex; gap: 8px; margin-top: 12px; }
+    .edit-button, .delete-button { min-height: 34px; padding: 0 12px; border: 1px solid #ffffffb8; border-radius: 8px; background: #ffffffa6; backdrop-filter: blur(10px); font-size: 11px; font-weight: 600; cursor: pointer; transition: background 160ms ease, transform 160ms ease; }
+    .edit-button::before { content: "🍐"; margin-right: 5px; }
+    .delete-button::before { content: "🍉"; margin-right: 5px; }
+    .edit-button:hover, .delete-button:hover { transform: translateY(-1px); }
+    .edit-button:hover { border-color: #4968f280; background: #dce5ffb8; }
+    .delete-button { color: #93463c; }
+    .delete-button:hover { border-color: #ff795f80; color: #852d23; background: #ffe3dcbf; }
+    .card-body { padding: 14px 15px 15px; }
+    .card-topline { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .product-name { margin: 0; overflow: hidden; text-overflow: ellipsis; font-size: 20px; line-height: 1.2; font-weight: 600; text-transform: capitalize; }
+    .product-type { color: #849188; font: 10px var(--mono); text-transform: uppercase; }
+    .product-facts { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 9px; margin-top: 14px; }
+    .product-fact { min-width: 0; padding: 8px; border: 1px solid #ffffffa6; border-radius: 8px; background: #e8f0e9a6; }
+    .product-fact span { display: block; margin-bottom: 5px; color: #849188; font: 9px var(--mono); text-transform: uppercase; }
+    .product-fact strong { display: block; overflow: hidden; color: #31483b; font-size: 11px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 14px; padding-top: 12px; border-top: 1px solid #e7ece5; }
+    .route-label { overflow: hidden; color: #738077; font: 10px var(--mono); text-overflow: ellipsis; white-space: nowrap; }
+    .details-button { flex: none; padding: 7px 10px; border: 0; border-radius: 2px; color: var(--ink); background: #e5eddf; font-size: 11px; font-weight: 600; cursor: pointer; }
+    .details-button::before { content: "🍇"; margin-right: 5px; }
+    .details-button:hover { background: var(--lime); }
+
+    .message { grid-column: 1 / -1; padding: 36px 20px; border: 1px dashed #b9c9bc; color: #586b60; text-align: center; background: #f9fbf6; }
+    .message.error { border-color: #e8a095; color: #a64638; }
+    .footer { display: flex; justify-content: space-between; gap: 12px; margin-top: 31px; padding-top: 15px; border-top: 1px solid #cbd8ce; color: #718078; font: 10px var(--mono); text-transform: uppercase; }
+
+    .modal-backdrop { position: fixed; z-index: 5; inset: 0; display: grid; place-items: center; padding: 18px; background: #1020197a; backdrop-filter: blur(8px) saturate(125%); }
+    .modal-backdrop[hidden] { display: none; }
+    .modal { width: min(460px, 100%); padding: 23px; border: 1px solid #ffffffc9; border-top: 3px solid var(--lime); border-radius: 17px; background: #f8fbf0d9; box-shadow: 0 24px 80px #10201955, inset 0 1px #ffffffd9; backdrop-filter: blur(24px) saturate(155%); -webkit-backdrop-filter: blur(24px) saturate(155%); animation: appear 180ms ease both; }
+    .modal-head { display: flex; align-items: start; justify-content: space-between; gap: 20px; }
+    .modal-label { color: #547063; }
+    .modal h2 { margin: 9px 0; font-size: 29px; text-transform: capitalize; }
+    .modal-detail { margin: 0; color: #697a70; font-size: 14px; }
+    .modal-close { width: 34px; height: 34px; border: 1px solid #ffffffc9; border-radius: 9px; background: #ffffff85; font-size: 20px; cursor: pointer; }
+    .modal-route { display: block; margin-top: 22px; padding: 11px; border: 1px solid #ffffff26; border-radius: 9px; color: #d8e4da; background: #14251fe8; font: 11px var(--mono); overflow-wrap: anywhere; }
+    .json-viewer { max-height: min(52vh, 480px); overflow: auto; margin: 12px 0 0; padding: 15px; border: 1px solid #ffffff24; border-left: 3px solid var(--lime); border-radius: 10px; color: #e1ecdf; background: #14251fe8; font: 12px/1.65 var(--mono); white-space: pre; }
+    .add-dialog { width: min(460px, calc(100% - 32px)); max-width: none; max-height: 90vh; overflow: auto; border: 1px solid #ffffffc9; border-top: 3px solid var(--lime); border-radius: 17px; padding: 23px; color: var(--ink); background: #f8fbf0df; box-shadow: 0 24px 80px #10201955, inset 0 1px #ffffffd9; backdrop-filter: blur(24px) saturate(155%); -webkit-backdrop-filter: blur(24px) saturate(155%); }
+    .add-dialog::backdrop { background: #1020197a; backdrop-filter: blur(8px) saturate(125%); }
+    .add-form { display: grid; gap: 15px; margin-top: 20px; }
+    .form-field { display: grid; gap: 7px; color: #53665b; font: 11px var(--mono); text-transform: uppercase; }
+    .form-field input, .form-field select { width: 100%; height: 42px; padding: 0 11px; border: 1px solid #ffffffc9; border-radius: 9px; outline: none; color: var(--ink); background: #ffffffa8; backdrop-filter: blur(12px); font: 14px var(--sans); text-transform: none; }
+    .form-field input:focus, .form-field select:focus { border-color: var(--blue); box-shadow: 0 0 0 2px #4968f220; }
+    .form-hint { margin: -5px 0 0; color: #718078; font-size: 12px; line-height: 1.5; }
+    .image-preview { height: 150px; overflow: hidden; border: 1px solid var(--line); background: #e7eee3; }
+    .image-preview[hidden] { display: none; }
+    .image-preview img { width: 100%; height: 100%; display: block; object-fit: cover; }
+    .form-error { margin: 0; color: #a64638; font-size: 13px; }
+    .form-error:empty { display: none; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 9px; margin-top: 3px; }
+    .cancel-button, .submit-button { min-height: 40px; padding: 0 14px; border: 1px solid var(--line); border-radius: 2px; background: transparent; cursor: pointer; font-size: 13px; font-weight: 600; }
+    .submit-button { border-color: var(--ink); color: white; background: var(--ink); }
+    .submit-button:hover { border-color: var(--blue); background: var(--blue); }
+    .cancel-button:hover { background: #e5eddf; }
+
+    .music-buddy { position: fixed; z-index: 4; top: 50%; right: 14px; display: grid; justify-items: center; gap: 4px; width: 98px; padding: 12px 8px 10px; transform: translateY(-50%); border: 1px solid #ffffffc9; border-radius: 18px; background: #f8fbf0c9; box-shadow: 0 12px 36px #10201922, inset 0 1px #ffffffd9; backdrop-filter: blur(22px) saturate(155%); -webkit-backdrop-filter: blur(22px) saturate(155%); }
+    .buddy-duet { position: relative; height: 104px; width: 88px; display: grid; place-items: center; }
+    .banana-character { position: relative; z-index: 1; width: 82px; height: 100px; overflow: visible; transform-origin: 51% 88%; animation: banana-bop 1.2s ease-in-out infinite; }
+    .banana-arm, .banana-leg, .fruit-arm, .fruit-leg { transform-box: fill-box; }
+    .banana-arm-left { transform-origin: 100% 20%; animation: banana-wave-left 720ms ease-in-out infinite alternate; }
+    .banana-arm-right { transform-origin: 0% 20%; animation: banana-strum 340ms ease-in-out infinite alternate; }
+    .banana-leg-left { transform-origin: 50% 0; animation: banana-step-left 600ms ease-in-out infinite alternate; }
+    .banana-leg-right { transform-origin: 50% 0; animation: banana-step-right 600ms ease-in-out infinite alternate; }
+    .banana-guitar { position: absolute; z-index: 2; right: 0; bottom: 14px; width: 48px; height: 50px; filter: drop-shadow(0 2px 2px #10201930); }
+    .music-caption { color: #53665b; font: 7px var(--mono); text-align: center; text-transform: uppercase; white-space: nowrap; }
+    .music-status { color: #718078; font: 7px var(--mono); text-align: center; }
+    .pagode-lyric { max-width: 82px; min-height: 20px; color: #4968f2; font: 7px/1.35 var(--mono); text-align: center; }
+    .music-toggle { width: 38px; height: 34px; display: grid; place-items: center; border: 1px solid #ffffffdb; border-radius: 11px; color: var(--ink); background: #ffffffa8; cursor: pointer; transition: background 160ms ease, transform 160ms ease; }
+    .music-toggle:hover { transform: translateY(-1px); background: var(--lime); }
+    .music-toggle[aria-pressed="true"] { color: white; background: var(--ink); }
+    .music-toggle span { font-size: 17px; }
+
+    .celebration { position: fixed; z-index: 20; inset: 0; display: grid; place-items: center; overflow: hidden; padding: 24px; color: #f8fff2; background: #102019eF; backdrop-filter: blur(12px) saturate(135%); -webkit-backdrop-filter: blur(12px) saturate(135%); }
+    .celebration[hidden] { display: none; }
+    .celebration-close { position: absolute; top: 22px; right: 22px; width: 42px; height: 42px; border: 1px solid #ffffff55; border-radius: 13px; color: white; background: #ffffff16; font-size: 24px; cursor: pointer; }
+    .celebration-content { position: relative; z-index: 2; width: min(520px, 100%); padding: 34px 28px 30px; border: 1px solid #ffffff45; border-radius: 22px; text-align: center; background: #ffffff14; box-shadow: 0 24px 90px #0003, inset 0 1px #ffffff30; backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); animation: appear 300ms ease both; }
+    .celebration-fruit { display: block; width: 145px; height: 155px; margin: 0 auto 10px; overflow: visible; filter: drop-shadow(0 9px 12px #0003); animation: fruit-dance 1.25s ease-in-out infinite alternate; }
+    .fruit-arm-left { transform-origin: 100% 20%; animation: fruit-wave-left 900ms ease-in-out infinite alternate; }
+    .fruit-arm-right { transform-origin: 0% 20%; animation: fruit-wave-right 820ms ease-in-out infinite alternate; }
+    .fruit-leg-left { transform-origin: 50% 0; animation: fruit-step-left 700ms ease-in-out infinite alternate; }
+    .fruit-leg-right { transform-origin: 50% 0; animation: fruit-step-right 700ms ease-in-out infinite alternate; }
+    .celebration-eyebrow { margin: 0 0 7px; color: var(--lime); font: 11px var(--mono); letter-spacing: 0; text-transform: uppercase; }
+    .celebration-title { margin: 0; font-size: 38px; line-height: 1.05; font-weight: 700; }
+    .celebration-item { margin: 12px 0 0; color: #dce8de; font-size: 15px; }
+    .firework { position: absolute; z-index: 1; width: 8px; height: 8px; border-radius: 50%; color: #d9ff64; background: currentColor; opacity: 0; box-shadow: 0 -46px 0 -2px currentColor, 33px -33px 0 -2px #ff795f, 46px 0 0 -2px #5ee6d0, 33px 33px 0 -2px #f7cf57, 0 46px 0 -2px #d9ff64, -33px 33px 0 -2px #ff795f, -46px 0 0 -2px #5ee6d0, -33px -33px 0 -2px #f7cf57; animation: firework-burst 1.7s ease-out infinite; }
+    .firework:nth-of-type(1) { top: 18%; left: 49%; }
+    .firework:nth-of-type(2) { top: 22%; left: 20%; color: #ff795f; animation-delay: 120ms; }
+    .firework:nth-of-type(3) { top: 27%; right: 21%; color: #5ee6d0; animation-delay: 680ms; }
+    .firework:nth-of-type(4) { bottom: 18%; left: 24%; color: #f7cf57; animation-delay: 420ms; }
+    .firework:nth-of-type(5) { right: 17%; bottom: 20%; color: #d9ff64; animation-delay: 920ms; }
+
+    .delete-confirm { position: fixed; z-index: 18; inset: 0; display: grid; place-items: center; padding: 20px; background: #14251f75; backdrop-filter: blur(9px) saturate(130%); -webkit-backdrop-filter: blur(9px) saturate(130%); }
+    .delete-confirm[hidden] { display: none; }
+    .delete-panel { width: min(430px, 100%); padding: 25px; border: 1px solid #ffffffc9; border-top: 3px solid var(--coral); border-radius: 18px; text-align: center; background: #f8fbf0e8; box-shadow: 0 25px 80px #10201955, inset 0 1px #ffffffd9; backdrop-filter: blur(24px) saturate(155%); -webkit-backdrop-filter: blur(24px) saturate(155%); animation: appear 200ms ease both; }
+    .sad-banana { width: 100px; height: 112px; margin: 1px auto 12px; display: block; filter: drop-shadow(0 6px 8px #14251f22); animation: sad-banana-sway 1.4s ease-in-out infinite alternate; }
+    .delete-title { margin: 0; font-size: 25px; font-weight: 600; }
+    .delete-message { margin: 10px 0 22px; color: #697a70; font-size: 14px; line-height: 1.5; }
+    .delete-message strong { color: var(--ink); }
+    .delete-error { min-height: 18px; margin: 0 0 10px; color: #a64638; font-size: 12px; }
+    .delete-error:empty { display: none; }
+    .delete-actions { display: flex; justify-content: center; gap: 10px; }
+    .cancel-delete, .confirm-delete { min-height: 41px; padding: 0 17px; border: 1px solid #ffffffc9; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; }
+    .cancel-delete { color: var(--ink); background: #ffffffa8; }
+    .confirm-delete { border-color: #a9463c; color: white; background: #b95246; }
+    .cancel-delete:hover { background: #e6eee3; }
+    .confirm-delete:hover { background: #993e34; }
+
+    @keyframes appear { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes banana-bop { 0%, 100% { transform: rotate(-7deg) translateY(1px); } 50% { transform: rotate(7deg) translateY(-5px); } }
+    @keyframes banana-wave-left { from { transform: rotate(-13deg); } to { transform: rotate(22deg); } }
+    @keyframes banana-strum { from { transform: rotate(-10deg); } to { transform: rotate(17deg); } }
+    @keyframes banana-step-left { from { transform: rotate(-10deg); } to { transform: rotate(10deg); } }
+    @keyframes banana-step-right { from { transform: rotate(10deg); } to { transform: rotate(-10deg); } }
+    @keyframes fruit-dance { from { transform: rotate(-5deg) translateY(2px) scale(0.98); } to { transform: rotate(5deg) translateY(-7px) scale(1.02); } }
+    @keyframes fruit-wave-left { from { transform: rotate(-10deg); } to { transform: rotate(15deg); } }
+    @keyframes fruit-wave-right { from { transform: rotate(10deg); } to { transform: rotate(-15deg); } }
+    @keyframes fruit-step-left { from { transform: rotate(-8deg); } to { transform: rotate(9deg); } }
+    @keyframes fruit-step-right { from { transform: rotate(8deg); } to { transform: rotate(-9deg); } }
+    @keyframes firework-burst { 0% { opacity: 0; transform: scale(0.12); } 18% { opacity: 1; } 65% { opacity: 0.9; transform: scale(1); } 100% { opacity: 0; transform: scale(1.22); } }
+    @keyframes sad-banana-sway { from { transform: rotate(-4deg) translateY(1px); } to { transform: rotate(4deg) translateY(-3px); } }
+
+    @media (max-width: 760px) {
+      .topbar { min-height: 62px; padding: 0 18px; }
+      .top-actions { gap: 14px; }
+      .status { font-size: 9px; }
+      main { padding: 29px 18px 46px; }
+      .intro { grid-template-columns: minmax(0, 1fr) 36%; gap: 18px; }
+      .intro-copy { padding: 9px 0; }
+      h1 { margin-top: 14px; font-size: 41px; }
+      .intro-copy p { max-width: 360px; font-size: 13px; line-height: 1.5; }
+      .feature-image { min-height: 170px; }
+      .feature-caption { left: 10px; right: 10px; bottom: 10px; }
+      .feature-caption strong { font-size: 15px; }
+      .feature-caption span { font-size: 8px; }
+      .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+      .image-wrap { height: 180px; }
+    }
+
+    @media (max-width: 520px) {
+      .brand-name { font-size: 13px; }
+      .docs-link { font-size: 9px; }
+      .top-actions { gap: 11px; }
+      .intro { grid-template-columns: 1fr; gap: 17px; }
+      .intro-copy { padding-bottom: 0; }
+      h1 { max-width: 380px; font-size: 42px; }
+      .feature-image { min-height: 150px; }
+      .toolbar { align-items: stretch; flex-direction: column; gap: 12px; margin-top: 22px; }
+      .toolbar-left, .toolbar-right { justify-content: space-between; }
+      .search { width: min(260px, calc(100vw - 100px)); }
+      .toolbar-right { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; }
+      .search-wrap { grid-column: 1 / -1; }
+      .search { width: 100%; }
+      .product-grid { grid-template-columns: 1fr; }
+      .image-wrap { height: 220px; }
+      .footer { flex-direction: column; }
+      .music-buddy { top: auto; right: 12px; bottom: 12px; transform: none; }
+      .celebration-content { padding: 29px 20px 25px; }
+      .celebration-title { font-size: 32px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas class="glitter-canvas" id="background-glitter" aria-hidden="true"></canvas>
+  <canvas class="glitter-canvas" id="click-glitter" aria-hidden="true"></canvas>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Feira API, início">
+      <span class="brand-mark" aria-hidden="true">f.</span>
+      <span class="brand-name">FEIRA <span>/ API 🍍</span></span>
+    </a>
+    <div class="top-actions">
+      <span class="status" id="api-status"><span class="status-dot"></span><span id="status-text">Conectando</span></span>
+      <a class="docs-link" href="/docs">DOCUMENTAÇÃO ↗</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <div class="intro-copy">
+        <div class="eyebrow">SENAI / INVENTÁRIO AO VIVO</div>
+        <h1 id="page-title">🍓 Dados frescos.<br><span>Direto da fonte. 🍊</span></h1>
+        <p>Explore e gerencie os produtos disponíveis na API.</p>
+      </div>
+      <div class="feature-image" aria-label="Cesta com frutas frescas">
+        <img src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=900&q=85" alt="Frutas e vegetais frescos em uma feira" fetchpriority="high">
+        <div class="feature-caption"><strong>Da feira, sem filtros.</strong><span>Feed ativo</span></div>
+      </div>
+    </section>
+
+    <section class="toolbar" aria-label="Controles do catálogo">
+      <div class="toolbar-left">
+        <div class="count"><strong id="product-count">--</strong><span class="count-label">itens</span></div>
+        <span class="endpoint">GET /produtos</span>
+      </div>
+      <div class="toolbar-right">
+        <label class="search-wrap"><input class="search" id="search" type="search" placeholder="Buscar fruta pelo nome..." aria-label="Buscar produto no catálogo" autocomplete="off"></label>
+        <button class="add-button" id="open-add" type="button"><span class="add-symbol" aria-hidden="true">+</span> Adicionar item</button>
+        <button class="icon-button" id="refresh" type="button" aria-label="Atualizar produtos" title="Atualizar produtos"><span class="refresh-symbol" aria-hidden="true">↻</span></button>
+      </div>
+    </section>
+
+    <section class="product-grid" id="product-grid" aria-live="polite" aria-label="Produtos"></section>
+    <footer class="footer"><span>FEIRA API · SENAI</span><span id="last-updated">Aguardando conexão</span><span>REST / JSON</span></footer>
+  </main>
+
+  <div class="modal-backdrop" id="modal-backdrop" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-head">
+        <div><span class="modal-label">JSON / RESPOSTA DA API</span><h2 id="modal-title"></h2></div>
+        <button class="modal-close" id="modal-close" type="button" aria-label="Fechar">×</button>
+      </div>
+      <code class="modal-route" id="modal-route"></code>
+      <pre class="json-viewer" id="modal-json" aria-label="Dados do item em formato JSON"></pre>
+    </section>
+  </div>
+
+  <dialog class="add-dialog" id="add-dialog" aria-labelledby="add-title">
+    <div class="modal-head">
+      <div><span class="modal-label">NOVO REGISTRO</span><h2 id="add-title">Adicionar item</h2><p class="modal-detail">O produto entra no catálogo em ordem alfabética.</p></div>
+      <button class="modal-close" id="close-add" type="button" aria-label="Fechar">×</button>
+    </div>
+    <form class="add-form" id="add-form">
+      <label class="form-field" for="product-name">Nome do item
+        <input id="product-name" name="nome" type="text" maxlength="80" placeholder="Ex.: Kiwi" required>
+      </label>
+      <label class="form-field" for="product-taste">Sabor
+        <input id="product-taste" name="sabor" type="text" maxlength="80" placeholder="Ex.: doce e ácido" required>
+      </label>
+      <label class="form-field" for="product-color">Cor
+        <input id="product-color" name="cor" type="text" maxlength="40" placeholder="Ex.: verde" required>
+      </label>
+      <label class="form-field" for="product-seeds">Tem sementes?
+        <select id="product-seeds" name="tem_sementes" required>
+          <option value="" disabled selected>Selecione uma opção</option>
+          <option value="true">Sim</option>
+          <option value="false">Não</option>
+        </select>
+      </label>
+      <label class="form-field" for="product-image">URL da imagem (opcional)
+        <input id="product-image" name="imagem" type="url" placeholder="https://...">
+      </label>
+      <p class="form-hint">Sem URL? Uma imagem será selecionada automaticamente pelo nome do item.</p>
+      <div class="image-preview" id="image-preview" hidden><img id="image-preview-img" alt="Prévia da imagem do produto"></div>
+      <p class="form-error" id="form-error" role="alert"></p>
+      <div class="form-actions">
+        <button class="cancel-button" id="cancel-add" type="button">Cancelar</button>
+        <button class="submit-button" id="submit-product" type="submit">Adicionar produto</button>
+      </div>
+    </form>
+  </dialog>
+
+  <aside class="music-buddy" id="music-buddy" aria-label="Música de fundo com violão">
+    <div class="buddy-duet" aria-hidden="true">
+      <svg class="banana-character" viewBox="0 0 120 140">
+        <g fill="none" stroke="#d99d20" stroke-linecap="round" stroke-linejoin="round" stroke-width="7">
+          <path class="banana-arm banana-arm-left" d="M39 62 22 48 18 34"/><path class="banana-arm banana-arm-right" d="M83 63 96 50 101 39"/>
+          <path class="banana-leg banana-leg-left" d="m54 91-7 19-9 3"/><path class="banana-leg banana-leg-right" d="m76 91 8 18 10 2"/>
+        </g>
+        <circle cx="17" cy="32" r="5" fill="#ffd34e"/><circle cx="102" cy="37" r="5" fill="#ffd34e"/>
+        <path d="M40 12C24 21 22 40 34 58c13 20 35 35 53 30 11-3 18-11 15-19-17 5-36-10-47-25C43 30 42 20 49 12c-2-4-6-4-9 0Z" fill="#ffd84f" stroke="#b77b11" stroke-width="3"/>
+        <path d="M38 18c-5 9-3 20 3 29" fill="none" stroke="#fff1a3" stroke-linecap="round" stroke-width="4"/>
+        <ellipse cx="55" cy="43" rx="4.5" ry="6" fill="#fff"/><ellipse cx="70" cy="46" rx="4.5" ry="6" fill="#fff"/>
+        <circle cx="56" cy="44" r="2.2" fill="#25291f"/><circle cx="71" cy="47" r="2.2" fill="#25291f"/>
+        <path d="M56 57q8 8 16-1" fill="none" stroke="#78411f" stroke-linecap="round" stroke-width="3"/>
+        <path d="m35 111-8 6 13 2M83 109l8 7-13 2" fill="none" stroke="#574038" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+      </svg>
+      <svg class="banana-guitar" viewBox="0 0 60 70">
+        <path d="m34 34 19-21-5-5-20 21" fill="#b46f37" stroke="#573e2e" stroke-width="2"/>
+        <path d="M25 29c-7-8-17-4-16 4-9 4-6 17 3 18 3 10 17 10 20 1 9-5 6-16-1-18 0-2-2-4-6-5Z" fill="#e99c50" stroke="#69452c" stroke-width="2.5"/>
+        <circle cx="20" cy="40" r="4" fill="#553b2a"/>
+        <path d="m16 40 25-27m-23 30 25-27m-22 30 25-27" stroke="#fff0ca" stroke-width=".8"/>
+        <path d="m47 5 8 8m-11-5 8 8" stroke="#573e2e" stroke-width="2"/>
+      </svg>
+    </div>
+    <span class="music-caption">🍍 Pagode: Salada de Frutas</span>
+    <span class="music-status" id="music-status" aria-live="polite">Toque para ouvir</span>
+    <span class="pagode-lyric" id="pagode-lyric" aria-live="polite">Fruta, cor e sabor!</span>
+    <button class="music-toggle" id="music-toggle" type="button" aria-label="Ativar som do violão" aria-pressed="false" title="Ativar som do violão"><span id="music-icon" aria-hidden="true">♫</span></button>
+  </aside>
+
+  <div class="celebration" id="celebration" role="status" aria-live="assertive" hidden>
+    <span class="firework" aria-hidden="true"></span>
+    <span class="firework" aria-hidden="true"></span>
+    <span class="firework" aria-hidden="true"></span>
+    <span class="firework" aria-hidden="true"></span>
+    <button class="celebration-close" id="close-celebration" type="button" aria-label="Fechar celebração">×</button>
+    <div class="celebration-content">
+      <svg class="celebration-fruit" id="celebration-fruit" viewBox="0 0 180 190" role="img" aria-label="Fruta feliz dançando">
+        <g fill="none" stroke="#f06d5e" stroke-linecap="round" stroke-linejoin="round" stroke-width="7">
+          <path class="fruit-arm fruit-arm-left" d="m42 91-22-13-8-16"/><path class="fruit-arm fruit-arm-right" d="m138 91 22-13 8-16"/>
+          <path class="fruit-leg fruit-leg-left" d="m69 144-4 23-12 8"/><path class="fruit-leg fruit-leg-right" d="m111 144 5 23 12 8"/>
+        </g>
+        <circle cx="11" cy="59" r="5" fill="#ef897a"/><circle cx="169" cy="59" r="5" fill="#ef897a"/>
+        <path d="M91 48c-17-22-48-8-49 17-2 31 21 63 46 79 2 1 4 1 6 0 25-16 48-48 46-79-1-25-32-39-49-17Z" fill="#f36c5d" stroke="#cf5249" stroke-width="3"/>
+        <path d="M90 49c-7-13-6-22 2-31" fill="none" stroke="#725036" stroke-linecap="round" stroke-width="7"/>
+        <path d="M91 31c7-18 26-20 33-14-4 15-18 22-33 20" fill="#70b65a" stroke="#438749" stroke-linejoin="round" stroke-width="3"/>
+        <ellipse cx="73" cy="91" rx="5" ry="7" fill="#fff7e9"/><ellipse cx="108" cy="91" rx="5" ry="7" fill="#fff7e9"/>
+        <circle cx="74" cy="92" r="2.5" fill="#372d2a"/><circle cx="109" cy="92" r="2.5" fill="#372d2a"/>
+        <circle cx="61" cy="104" r="6" fill="#ffaaa0" opacity=".75"/><circle cx="120" cy="104" r="6" fill="#ffaaa0" opacity=".75"/>
+        <path d="M80 108q10 13 21 0" fill="none" stroke="#713d39" stroke-linecap="round" stroke-width="3.5"/>
+        <path d="m53 175-10 5 18 1m70-1 10 5-19 1" fill="none" stroke="#514034" stroke-linecap="round" stroke-linejoin="round" stroke-width="5"/>
+      </svg>
+      <p class="celebration-eyebrow">CATÁLOGO ATUALIZADO</p>
+      <h2 class="celebration-title">ITEM CONFIRMADO</h2>
+      <p class="celebration-item" id="celebration-item"></p>
+    </div>
+  </div>
+
+  <div class="delete-confirm" id="delete-confirm" role="alertdialog" aria-modal="true" aria-labelledby="delete-title" aria-describedby="delete-message" hidden>
+    <section class="delete-panel">
+      <svg class="sad-banana" viewBox="0 0 120 140" role="img" aria-label="Banana triste">
+        <path d="M40 12C24 21 22 40 34 58c13 20 35 35 53 30 11-3 18-11 15-19-17 5-36-10-47-25C43 30 42 20 49 12c-2-4-6-4-9 0Z" fill="#ffd84f" stroke="#b77b11" stroke-width="3"/>
+        <path d="M38 18c-5 9-3 20 3 29" fill="none" stroke="#fff1a3" stroke-linecap="round" stroke-width="4"/>
+        <path d="M39 56 24 70 17 79m68-22 14 13 4 10" fill="none" stroke="#d99d20" stroke-linecap="round" stroke-linejoin="round" stroke-width="6"/>
+        <circle cx="16" cy="81" r="4" fill="#ffd34e"/><circle cx="103" cy="81" r="4" fill="#ffd34e"/>
+        <ellipse cx="55" cy="43" rx="4.5" ry="6" fill="#fff"/><ellipse cx="70" cy="46" rx="4.5" ry="6" fill="#fff"/>
+        <circle cx="56" cy="44" r="2.2" fill="#25291f"/><circle cx="71" cy="47" r="2.2" fill="#25291f"/>
+        <path d="m53 56 8 4m13-5-8 5" stroke="#78411f" stroke-linecap="round" stroke-width="2.5"/>
+        <path d="M59 68q8-9 16 0" fill="none" stroke="#78411f" stroke-linecap="round" stroke-width="3"/>
+      </svg>
+      <h2 class="delete-title" id="delete-title">Excluir este item?</h2>
+      <p class="delete-message" id="delete-message">Tem certeza de que deseja excluir <strong id="delete-product-name"></strong>?</p>
+      <p class="delete-error" id="delete-error" role="alert"></p>
+      <div class="delete-actions">
+        <button class="cancel-delete" id="cancel-delete" type="button">Cancelar</button>
+        <button class="confirm-delete" id="confirm-delete" type="button">Excluir item</button>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const fallbackImage = "https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80";
+    const grid = document.querySelector("#product-grid");
+    const search = document.querySelector("#search");
+    const status = document.querySelector("#api-status");
+    const statusText = document.querySelector("#status-text");
+    const count = document.querySelector("#product-count");
+    const lastUpdated = document.querySelector("#last-updated");
+    const backgroundCanvas = document.querySelector("#background-glitter");
+    const clickCanvas = document.querySelector("#click-glitter");
+    const backgroundContext = backgroundCanvas.getContext("2d");
+    const clickContext = clickCanvas.getContext("2d");
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const glitterColors = ["#ff795f", "#4968f2", "#d9aefc", "#f2c84b", "#48bfa8", "#ed6ba6"];
+    const backdrop = document.querySelector("#modal-backdrop");
+    const addDialog = document.querySelector("#add-dialog");
+    const addForm = document.querySelector("#add-form");
+    const imageInput = document.querySelector("#product-image");
+    const imagePreview = document.querySelector("#image-preview");
+    const previewImage = document.querySelector("#image-preview-img");
+    const musicBuddy = document.querySelector("#music-buddy");
+    const musicToggle = document.querySelector("#music-toggle");
+    const celebration = document.querySelector("#celebration");
+    const deleteConfirm = document.querySelector("#delete-confirm");
+    const confirmDeleteButton = document.querySelector("#confirm-delete");
+    const pagodePattern = [
+      { chord: [196, 392, 493.88, 587.33], tick: true, duration: 250 },
+      { tick: true, duration: 125 },
+      { chord: [146.83, 293.66, 369.99, 440], bass: 146.83, duration: 250 },
+      { chord: [146.83, 369.99, 440], tick: true, duration: 125 },
+      { chord: [174.61, 349.23, 440, 523.25], tick: true, duration: 250 },
+      { bass: 174.61, tick: true, duration: 125 },
+      { chord: [130.81, 261.63, 329.63, 392], bass: 130.81, duration: 250 },
+      { chord: [130.81, 329.63, 392], tick: true, duration: 375 }
+    ];
+    const pagodeLyrics = [
+      "Fruta, cor e sabor!",
+      "Salada pra festejar!",
+      "No balanço, vem dançar!",
+      "Doce alegria no ar!"
+    ];
+    let products = [];
+    let audioContext;
+    let audioBus;
+    let pagodeStep = 0;
+    let guitarTimer;
+    let celebrationTimer;
+    let guitarEnabled = false;
+    let pendingDelete = null;
+    let deleteReturnFocus = null;
+    let canvasWidth = window.innerWidth;
+    let canvasHeight = window.innerHeight;
+    let canvasScale = Math.min(window.devicePixelRatio || 1, 2);
+    let burstGlitter = [];
+
+    function resizeGlitterCanvases() {
+      canvasWidth = window.innerWidth;
+      canvasHeight = window.innerHeight;
+      canvasScale = Math.min(window.devicePixelRatio || 1, 2);
+      [backgroundCanvas, clickCanvas].forEach((canvas) => {
+        canvas.width = Math.round(canvasWidth * canvasScale);
+        canvas.height = Math.round(canvasHeight * canvasScale);
+        const context = canvas.getContext("2d");
+        context.setTransform(canvasScale, 0, 0, canvasScale, 0, 0);
+      });
+    }
+
+    function createRainGlitter(y = -Math.random() * canvasHeight) {
+      return {
+        x: Math.random() * canvasWidth,
+        y,
+        size: 1.2 + Math.random() * 2.4,
+        speed: 0.35 + Math.random() * 1.15,
+        drift: (Math.random() - 0.5) * 0.42,
+        phase: Math.random() * Math.PI * 2,
+        color: glitterColors[Math.floor(Math.random() * glitterColors.length)]
+      };
+    }
+
+    const rainGlitter = Array.from({ length: reducedMotion ? 18 : 58 }, () => createRainGlitter());
+
+    function drawGlitter(context, particle, alpha, rotation = 0) {
+      context.save();
+      context.globalAlpha = alpha;
+      context.translate(particle.x, particle.y);
+      context.rotate(rotation);
+      context.fillStyle = particle.color;
+      context.shadowColor = particle.color;
+      context.shadowBlur = particle.size * 3;
+      context.beginPath();
+      context.moveTo(0, -particle.size * 1.8);
+      context.lineTo(particle.size * 0.65, 0);
+      context.lineTo(0, particle.size * 1.8);
+      context.lineTo(-particle.size * 0.65, 0);
+      context.closePath();
+      context.fill();
+      context.restore();
+    }
+
+    function animateBackgroundGlitter(time) {
+      backgroundContext.clearRect(0, 0, canvasWidth, canvasHeight);
+      rainGlitter.forEach((particle) => {
+        particle.y += reducedMotion ? particle.speed * 0.2 : particle.speed;
+        particle.x += particle.drift + Math.sin(time / 900 + particle.phase) * (reducedMotion ? 0.06 : 0.18);
+        if (particle.y > canvasHeight + 8) Object.assign(particle, createRainGlitter(-8));
+        if (particle.x < -8) particle.x = canvasWidth + 8;
+        if (particle.x > canvasWidth + 8) particle.x = -8;
+        const shimmer = reducedMotion
+          ? 0.24 + (Math.sin(time / 900 + particle.phase) + 1) * 0.08
+          : 0.3 + (Math.sin(time / 240 + particle.phase) + 1) * 0.22;
+        drawGlitter(backgroundContext, particle, shimmer, time / 1000 + particle.phase);
+      });
+      requestAnimationFrame(animateBackgroundGlitter);
+    }
+
+    function launchGlitterBurst(x, y) {
+      burstGlitter = Array.from({ length: reducedMotion ? 16 : 54 }, () => {
+        const angle = Math.random() * Math.PI * 2;
+        const speed = reducedMotion ? 0.45 + Math.random() * 1.1 : 1.1 + Math.random() * 4.2;
+        return {
+          x,
+          y,
+          vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed - 1.2,
+          size: 1.5 + Math.random() * 3,
+          life: reducedMotion ? 55 + Math.random() * 20 : 45 + Math.random() * 35,
+          color: glitterColors[Math.floor(Math.random() * glitterColors.length)],
+          rotation: Math.random() * Math.PI,
+          spin: (Math.random() - 0.5) * 0.18
+        };
+      });
+    }
+
+    function animateClickGlitter() {
+      clickContext.clearRect(0, 0, canvasWidth, canvasHeight);
+      burstGlitter = burstGlitter.filter((particle) => particle.life > 0);
+      burstGlitter.forEach((particle) => {
+        particle.x += particle.vx;
+        particle.y += particle.vy;
+        particle.vy += 0.075;
+        particle.vx *= 0.985;
+        particle.rotation += particle.spin;
+        particle.life -= 1;
+        drawGlitter(clickContext, particle, Math.min(1, particle.life / 18), particle.rotation);
+      });
+      requestAnimationFrame(animateClickGlitter);
+    }
+
+    resizeGlitterCanvases();
+    window.addEventListener("resize", resizeGlitterCanvases);
+    requestAnimationFrame(animateBackgroundGlitter);
+    requestAnimationFrame(animateClickGlitter);
+
+    function setStatus(online) {
+      status.classList.toggle("is-offline", !online);
+      statusText.textContent = online ? "API online" : "API indisponível";
+    }
+
+    function playGuitarNote(frequency, delay = 0, volume = 0.18) {
+      const now = audioContext.currentTime + delay;
+      const envelope = audioContext.createGain();
+      const filter = audioContext.createBiquadFilter();
+      const fundamental = audioContext.createOscillator();
+      const harmonic = audioContext.createOscillator();
+      const harmonicGain = audioContext.createGain();
+
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(2600, now);
+      envelope.gain.setValueAtTime(0.0001, now);
+      envelope.gain.exponentialRampToValueAtTime(volume, now + 0.018);
+      envelope.gain.exponentialRampToValueAtTime(0.0001, now + 0.42);
+      harmonicGain.gain.value = 0.32;
+      fundamental.type = "triangle";
+      fundamental.frequency.setValueAtTime(frequency, now);
+      harmonic.type = "sine";
+      harmonic.frequency.setValueAtTime(frequency * 2, now);
+      fundamental.connect(filter);
+      harmonic.connect(harmonicGain);
+      harmonicGain.connect(filter);
+      filter.connect(envelope);
+      envelope.connect(audioBus);
+      fundamental.start(now);
+      harmonic.start(now);
+      fundamental.stop(now + 0.45);
+      harmonic.stop(now + 0.45);
+    }
+
+    function playPagodeChord(notes) {
+      notes.forEach((frequency, index) => playGuitarNote(frequency, index * 0.024, 0.13));
+    }
+
+    function playPagodeTick() {
+      const sampleCount = Math.floor(audioContext.sampleRate * 0.055);
+      const noiseBuffer = audioContext.createBuffer(1, sampleCount, audioContext.sampleRate);
+      const channel = noiseBuffer.getChannelData(0);
+      for (let index = 0; index < sampleCount; index += 1) {
+        channel[index] = (Math.random() * 2 - 1) * (1 - index / sampleCount);
+      }
+      const noise = audioContext.createBufferSource();
+      const highpass = audioContext.createBiquadFilter();
+      const tickGain = audioContext.createGain();
+      const now = audioContext.currentTime;
+      highpass.type = "highpass";
+      highpass.frequency.value = 5200;
+      tickGain.gain.setValueAtTime(0.0001, now);
+      tickGain.gain.exponentialRampToValueAtTime(0.16, now + 0.004);
+      tickGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.052);
+      noise.buffer = noiseBuffer;
+      noise.connect(highpass);
+      highpass.connect(tickGain);
+      tickGain.connect(audioBus);
+      noise.start(now);
+      noise.stop(now + 0.06);
+    }
+
+    function schedulePagodeStep() {
+      if (!guitarEnabled) return;
+      if (pagodeStep % pagodePattern.length === 0) {
+        const lyricIndex = Math.floor(pagodeStep / pagodePattern.length) % pagodeLyrics.length;
+        document.querySelector("#pagode-lyric").textContent = pagodeLyrics[lyricIndex];
+      }
+      const step = pagodePattern[pagodeStep % pagodePattern.length];
+      if (step.chord) playPagodeChord(step.chord);
+      if (step.bass) playGuitarNote(step.bass, 0, 0.24);
+      if (step.tick) playPagodeTick();
+      pagodeStep += 1;
+      guitarTimer = window.setTimeout(schedulePagodeStep, step.duration);
+    }
+
+    async function toggleGuitarMusic() {
+      if (guitarEnabled) {
+        guitarEnabled = false;
+        window.clearTimeout(guitarTimer);
+        await audioContext.close();
+        audioContext = null;
+        audioBus = null;
+      } else {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) {
+          document.querySelector("#music-status").textContent = "Áudio indisponível";
+          return;
+        }
+        try {
+          audioContext ||= new AudioContextClass();
+          if (!audioBus) {
+            const masterGain = audioContext.createGain();
+            const compressor = audioContext.createDynamicsCompressor();
+            masterGain.gain.setValueAtTime(2.2, audioContext.currentTime);
+            compressor.threshold.setValueAtTime(-15, audioContext.currentTime);
+            compressor.knee.setValueAtTime(8, audioContext.currentTime);
+            compressor.ratio.setValueAtTime(10, audioContext.currentTime);
+            compressor.attack.setValueAtTime(0.004, audioContext.currentTime);
+            compressor.release.setValueAtTime(0.22, audioContext.currentTime);
+            masterGain.connect(compressor);
+            compressor.connect(audioContext.destination);
+            audioBus = masterGain;
+          }
+          await audioContext.resume();
+          guitarEnabled = true;
+          pagodeStep = 0;
+          schedulePagodeStep();
+        } catch {
+          musicToggle.title = "Não foi possível ativar o áudio";
+          document.querySelector("#music-status").textContent = "Falha no áudio";
+          return;
+        }
+      }
+      musicBuddy.classList.toggle("is-playing", guitarEnabled);
+      musicToggle.setAttribute("aria-pressed", String(guitarEnabled));
+      musicToggle.setAttribute("aria-label", guitarEnabled ? "Desativar som do violão" : "Ativar som do violão");
+      musicToggle.title = guitarEnabled ? "Desativar som do violão" : "Ativar som do violão";
+      document.querySelector("#music-status").textContent = guitarEnabled ? "Pagode ligado" : "Som desligado";
+      document.querySelector("#music-icon").textContent = guitarEnabled ? "♫" : "♪";
+    }
+
+    function closeCelebration() {
+      window.clearTimeout(celebrationTimer);
+      celebration.hidden = true;
+    }
+
+    function celebrateItem(product) {
+      document.querySelector("#celebration-fruit").setAttribute("aria-label", `${product.nome}, fruta feliz dançando`);
+      document.querySelector("#celebration-item").textContent = `${product.nome} entrou no catálogo.`;
+      celebration.hidden = false;
+      document.querySelector("#close-celebration").focus();
+      celebrationTimer = window.setTimeout(closeCelebration, 4200);
+    }
+
+    function showMessage(text, isError = false) {
+      grid.replaceChildren();
+      const message = document.createElement("p");
+      message.className = `message${isError ? " error" : ""}`;
+      message.textContent = text;
+      grid.append(message);
+    }
+
+    function openDetails(product) {
+      fetch(`/produtos/${encodeURIComponent(product.nome)}`)
+        .then((response) => {
+          if (!response.ok) throw new Error("Produto não encontrado");
+          return response.json();
+        })
+        .then((data) => {
+          document.querySelector("#modal-title").textContent = data.nome;
+          document.querySelector("#modal-route").textContent = `GET /produtos/${encodeURIComponent(product.nome)}`;
+          document.querySelector("#modal-json").textContent = JSON.stringify(data, null, 2);
+          backdrop.hidden = false;
+          document.querySelector("#modal-close").focus();
+        })
+        .catch((error) => showMessage(error.message, true));
+    }
+
+    function makeCard(product) {
+      const card = document.createElement("article");
+      card.className = "product-card";
+      const imageWrap = document.createElement("div");
+      imageWrap.className = "image-wrap";
+      const image = document.createElement("img");
+      image.className = "product-image";
+      image.src = product.imagem || fallbackImage;
+      image.alt = `Imagem de ${product.nome}`;
+      image.loading = "lazy";
+      image.addEventListener("error", () => { image.src = fallbackImage; }, { once: true });
+
+      const indexLabel = document.createElement("span");
+      indexLabel.className = "card-index";
+      indexLabel.textContent = `ID / ${String(product.id).padStart(4, "0")}`;
+      imageWrap.append(image, indexLabel);
+
+      const body = document.createElement("div");
+      body.className = "card-body";
+      const topline = document.createElement("div");
+      topline.className = "card-topline";
+      const name = document.createElement("h2");
+      name.className = "product-name";
+      name.textContent = product.nome;
+      const type = document.createElement("span");
+      type.className = "product-type";
+      type.textContent = "Fruta";
+      topline.append(name, type);
+
+      const facts = document.createElement("div");
+      facts.className = "product-facts";
+      [
+        ["Sabor", product.sabor],
+        ["Cor", product.cor],
+        ["Sementes", product.tem_sementes ? "Sim" : "Não"]
+      ].forEach(([label, value]) => {
+        const fact = document.createElement("div");
+        fact.className = "product-fact";
+        const factLabel = document.createElement("span");
+        factLabel.textContent = label;
+        const factValue = document.createElement("strong");
+        factValue.textContent = value;
+        fact.append(factLabel, factValue);
+        facts.append(fact);
+      });
+
+      const footer = document.createElement("div");
+      footer.className = "card-footer";
+      const route = document.createElement("code");
+      route.className = "route-label";
+      route.textContent = `GET /produtos/${encodeURIComponent(product.nome)}`;
+      const details = document.createElement("button");
+      details.className = "details-button";
+      details.type = "button";
+      details.textContent = "Ver JSON ↗";
+      details.setAttribute("aria-label", `Ver JSON de ${product.nome}`);
+      details.addEventListener("click", () => openDetails(product));
+      footer.append(route, details);
+
+      const actions = document.createElement("div");
+      actions.className = "card-actions";
+      const editButton = document.createElement("button");
+      editButton.className = "edit-button";
+      editButton.type = "button";
+      editButton.textContent = "Editar";
+      editButton.addEventListener("click", () => editProduct(product));
+      const deleteButton = document.createElement("button");
+      deleteButton.className = "delete-button";
+      deleteButton.type = "button";
+      deleteButton.textContent = "Excluir";
+      deleteButton.addEventListener("click", () => requestDelete(product.id, product.nome));
+      actions.append(editButton, deleteButton);
+
+      body.append(topline, facts, footer, actions);
+      card.append(imageWrap, body);
+      return card;
+    }
+
+    function renderProducts() {
+      const query = search.value.trim().toLocaleLowerCase("pt-BR");
+      const filtered = products
+        .filter((product) => product.nome.toLocaleLowerCase("pt-BR").includes(query))
+        .sort((first, second) => first.nome.localeCompare(second.nome, "pt-BR", { sensitivity: "base" }));
+      count.textContent = String(products.length).padStart(2, "0");
+      grid.replaceChildren();
+      if (filtered.length === 0) {
+        showMessage(query ? "Nenhum produto corresponde à busca." : "Nenhum produto cadastrado.");
+        return;
+      }
+      filtered.forEach((product) => grid.append(makeCard(product)));
+    }
+
+    async function loadProducts() {
+      const refresh = document.querySelector("#refresh");
+      refresh.disabled = true;
+      try {
+        const response = await fetch("/produtos");
+        if (!response.ok) throw new Error("Não foi possível carregar os produtos.");
+        products = await response.json();
+        setStatus(true);
+        renderProducts();
+        lastUpdated.textContent = `Atualizado às ${new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+      } catch (error) {
+        setStatus(false);
+        showMessage(error.message, true);
+      } finally {
+        refresh.disabled = false;
+      }
+    }
+
+    function requestDelete(id, product) {
+      pendingDelete = { id, product };
+      deleteReturnFocus = document.activeElement;
+      document.querySelector("#delete-product-name").textContent = product;
+      document.querySelector("#delete-error").textContent = "";
+      deleteConfirm.hidden = false;
+      document.querySelector("#cancel-delete").focus();
+    }
+
+    function closeDeleteConfirm() {
+      deleteConfirm.hidden = true;
+      pendingDelete = null;
+      if (deleteReturnFocus instanceof HTMLElement) deleteReturnFocus.focus();
+    }
+
+    async function removeProduct() {
+      if (!pendingDelete) return;
+      const { id } = pendingDelete;
+      confirmDeleteButton.disabled = true;
+      try {
+        const response = await fetch(`/produtos/${id}`, { method: "DELETE" });
+        if (!response.ok) {
+          const result = await response.json();
+          throw new Error(result.detail || "Não foi possível remover este produto.");
+        }
+        closeDeleteConfirm();
+        await loadProducts();
+      } catch (error) {
+        document.querySelector("#delete-error").textContent = error.message;
+      } finally {
+        confirmDeleteButton.disabled = false;
+      }
+    }
+
+    function editProduct(product) {
+      addForm.reset();
+      addForm.dataset.editId = product.id;
+      document.querySelector("#add-title").textContent = `Editar ${product.nome}`;
+      document.querySelector("#submit-product").textContent = "Salvar alterações";
+      document.querySelector("#product-name").value = product.nome;
+      document.querySelector("#product-taste").value = product.sabor;
+      document.querySelector("#product-color").value = product.cor;
+      document.querySelector("#product-seeds").value = String(product.tem_sementes);
+      imageInput.value = product.imagem || "";
+      imagePreview.hidden = !product.imagem;
+      if (product.imagem) previewImage.src = product.imagem;
+      document.querySelector("#form-error").textContent = "";
+      addDialog.showModal();
+      document.querySelector("#product-name").focus();
+    }
+
+    async function submitProduct(event) {
+      event.preventDefault();
+      const submitButton = document.querySelector("#submit-product");
+      const errorMessage = document.querySelector("#form-error");
+      const formData = new FormData(addForm);
+      const editId = addForm.dataset.editId;
+      submitButton.disabled = true;
+      errorMessage.textContent = "";
+      try {
+        const response = await fetch(editId ? `/produtos/${editId}` : "/produtos", {
+          method: editId ? "PUT" : "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            nome: formData.get("nome"),
+            imagem: formData.get("imagem") || null,
+            sabor: formData.get("sabor"),
+            cor: formData.get("cor"),
+            tem_sementes: formData.get("tem_sementes") === "true"
+          })
+        });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.detail || "Não foi possível cadastrar o produto.");
+        addDialog.close();
+        addForm.reset();
+        delete addForm.dataset.editId;
+        document.querySelector("#add-title").textContent = "Adicionar item";
+        submitButton.textContent = "Adicionar produto";
+        imagePreview.hidden = true;
+        search.value = "";
+        await loadProducts();
+        if (editId) {
+          lastUpdated.textContent = `Item ${result.id} atualizado agora`;
+        } else {
+          lastUpdated.textContent = `Item ${result.id} cadastrado agora`;
+          celebrateItem(result);
+        }
+      } catch (error) {
+        errorMessage.textContent = error.message;
+      } finally {
+        submitButton.disabled = false;
+      }
+    }
+
+    search.addEventListener("input", renderProducts);
+    document.querySelector("#refresh").addEventListener("click", loadProducts);
+    document.querySelector("#open-add").addEventListener("click", () => {
+      addForm.reset();
+      delete addForm.dataset.editId;
+      document.querySelector("#add-title").textContent = "Adicionar item";
+      document.querySelector("#submit-product").textContent = "Adicionar produto";
+      imagePreview.hidden = true;
+      document.querySelector("#form-error").textContent = "";
+      addDialog.showModal();
+      document.querySelector("#product-name").focus();
+    });
+    document.querySelector("#close-add").addEventListener("click", () => addDialog.close());
+    document.querySelector("#cancel-add").addEventListener("click", () => addDialog.close());
+    addForm.addEventListener("submit", submitProduct);
+    imageInput.addEventListener("input", () => {
+      const imageUrl = imageInput.value.trim();
+      imagePreview.hidden = !imageUrl;
+      if (imageUrl) previewImage.src = imageUrl;
+    });
+    document.querySelector("#modal-close").addEventListener("click", () => { backdrop.hidden = true; });
+    document.addEventListener("click", (event) => {
+      const button = event.target instanceof Element ? event.target.closest("button") : null;
+      if (!button || button.disabled) return;
+      const bounds = button.getBoundingClientRect();
+      launchGlitterBurst(
+        event.clientX || bounds.left + bounds.width / 2,
+        event.clientY || bounds.top + bounds.height / 2
+      );
+    });
+    document.querySelector("#close-celebration").addEventListener("click", closeCelebration);
+    document.querySelector("#cancel-delete").addEventListener("click", closeDeleteConfirm);
+    confirmDeleteButton.addEventListener("click", removeProduct);
+    musicToggle.addEventListener("click", toggleGuitarMusic);
+    document.addEventListener("pointerdown", (event) => {
+      if (event.target instanceof Element && event.target.closest("#music-toggle")) return;
+      void toggleGuitarMusic();
+    }, { once: true });
+    backdrop.addEventListener("click", (event) => { if (event.target === backdrop) backdrop.hidden = true; });
+    deleteConfirm.addEventListener("click", (event) => { if (event.target === deleteConfirm) closeDeleteConfirm(); });
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        backdrop.hidden = true;
+        closeCelebration();
+        if (!deleteConfirm.hidden) closeDeleteConfirm();
+      }
+    });
+    loadProducts();
+  </script>
+</body>
+</html>
